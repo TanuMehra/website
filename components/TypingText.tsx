@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 interface TypingTextProps {
   texts: string[];
@@ -9,13 +8,14 @@ interface TypingTextProps {
 }
 
 export default function TypingText({ texts, className = "" }: TypingTextProps) {
-  const [displayText, setDisplayText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const current = texts[textIndex];
+  const displayText = current.slice(0, charIndex);
+
   useEffect(() => {
-    const current = texts[textIndex];
     let timeout: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && charIndex < current.length) {
@@ -25,13 +25,14 @@ export default function TypingText({ texts, className = "" }: TypingTextProps) {
     } else if (isDeleting && charIndex > 0) {
       timeout = setTimeout(() => setCharIndex((c) => c - 1), 35);
     } else {
-      setIsDeleting(false);
-      setTextIndex((i) => (i + 1) % texts.length);
+      timeout = setTimeout(() => {
+        setIsDeleting(false);
+        setTextIndex((i) => (i + 1) % texts.length);
+      }, 500);
     }
 
-    setDisplayText(current.slice(0, charIndex));
     return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, textIndex, texts]);
+  }, [charIndex, isDeleting, textIndex, texts, current.length]);
 
   return (
     <span className={className}>

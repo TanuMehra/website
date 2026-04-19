@@ -1,16 +1,22 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Navbar() {
+interface NavbarProps {
+  activePage: string;
+  setActivePage: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function Navbar({ activePage, setActivePage }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -26,9 +32,9 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: "/", label: "Home", emoji: "🏠" },
-    { href: "/memories", label: "Memories", emoji: "📸" },
-    { href: "/letter", label: "Letter", emoji: "💌" },
+    { id: "home", label: "Home", emoji: "🏠" },
+    { id: "memories", label: "Memories", emoji: "📸" },
+    { id: "letter", label: "Letter", emoji: "💌" },
   ];
 
   return (
@@ -44,7 +50,7 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group" aria-label="Home">
+        <button onClick={() => setActivePage("home")} className="flex items-center gap-2 group" aria-label="Home">
           <span className="text-2xl heartbeat inline-block">❤️</span>
           <span
             className="font-script text-xl text-rose-500 font-bold tracking-wide group-hover:text-rose-600 transition-colors"
@@ -52,20 +58,32 @@ export default function Navbar() {
           >
             My Love
           </span>
-        </Link>
+        </button>
 
-        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="relative text-rose-400 font-semibold text-sm tracking-wider uppercase hover:text-rose-600 transition-colors duration-200 group"
-            >
-              {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-rose-400 to-pink-400 group-hover:w-full transition-all duration-300 rounded-full" />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = activePage === link.id;
+            return (
+              <button
+                key={link.id}
+                onClick={() => setActivePage(link.id)}
+                className={`relative font-medium transition-colors hover:text-rose-500 flex items-center gap-2 ${
+                  isActive ? "text-rose-600 dark:text-rose-400 font-bold" : "text-gray-700 dark:text-gray-300"
+                }`}
+              >
+                <span>{link.emoji}</span>
+                {link.label}
+                {isActive && (
+                  <motion.div
+                    layoutId="navbar-indicator"
+                    className="absolute -bottom-2 left-0 right-0 h-0.5 bg-rose-500 rounded-full"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Mobile hamburger */}
@@ -92,18 +110,27 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="md:hidden bg-white/90 backdrop-blur-xl border-t border-pink-100/60 overflow-hidden"
           >
-            <div className="px-6 py-4 flex flex-col gap-3">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 text-rose-500 font-semibold py-2 px-3 rounded-xl hover:bg-pink-50 transition-colors"
-                >
-                  <span>{link.emoji}</span>
-                  {link.label}
-                </Link>
-              ))}
+            <div className="px-6 py-4 flex flex-col gap-2">
+              {navLinks.map((link) => {
+                const isActive = activePage === link.id;
+                return (
+                  <button
+                    key={link.id}
+                    onClick={() => {
+                      setActivePage(link.id);
+                      setMenuOpen(false);
+                    }}
+                    className={`block px-4 py-3 rounded-xl transition-all font-medium flex items-center gap-3 ${
+                      isActive
+                        ? "bg-rose-50 dark:bg-[#3b0a2a] text-rose-600 dark:text-rose-400"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    <span className="text-xl">{link.emoji}</span>
+                    {link.label}
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
         )}

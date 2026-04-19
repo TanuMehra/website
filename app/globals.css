@@ -89,4 +89,4 @@ body {
 
 .font-serif { font-family: var(--font-serif); }
 .font-script { font-family: var(--font-script); }
-.font-sans { font-family: var(--font-sans); }
+.font-sans { font-family: var(--font-sans); }html { scroll-behavior: smooth; }

@@ -1,73 +1,54 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
-interface MusicPlayerProps {
-  src?: string;
-}
+let globalAudio: HTMLAudioElement | null = null;
+let hasStarted = false;
 
-export default function MusicPlayer({ src = "/music/song.mp3" }: MusicPlayerProps) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-
+export default function MusicPlayer() {
   useEffect(() => {
-    const audio = new Audio(src);
-    audio.loop = true;
-    audio.volume = 0.5;
-    audioRef.current = audio;
+    if (typeof window === "undefined") return;
 
-    const onTimeUpdate = () => {
-      if (audio.duration) {
-        setProgress((audio.currentTime / audio.duration) * 100);
+    if (!globalAudio) {
+      globalAudio = new Audio("/music.mp3");
+      globalAudio.loop = true;
+      globalAudio.volume = 0.4;
+    }
+
+    const startMusic = () => {
+      if (!hasStarted && globalAudio) {
+        globalAudio
+          .play()
+          .then(() => {
+            hasStarted = true;
+            // Once started, we can cleanly remove the listeners
+            removeListeners();
+          })
+          .catch((err) => {
+            console.warn("Autoplay blocked by browser. Awaiting another interaction...", err);
+          });
       }
     };
-    audio.addEventListener("timeupdate", onTimeUpdate);
+
+    const removeListeners = () => {
+      document.removeEventListener("click", startMusic, { capture: true });
+      document.removeEventListener("keydown", startMusic, { capture: true });
+      document.removeEventListener("touchstart", startMusic, { capture: true });
+    };
+
+    // Only add listeners if it hasn't successfully started
+    if (!hasStarted) {
+      document.addEventListener("click", startMusic, { capture: true });
+      document.addEventListener("keydown", startMusic, { capture: true });
+      document.addEventListener("touchstart", startMusic, { capture: true });
+    }
 
     return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.pause();
+      // Cleanup happens if component unmounts before music starts
+      // But we don't ever pause the actual audio!
+      removeListeners();
     };
-  }, [src]);
+  }, []);
 
-  const toggle = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (playing) {
-      audio.pause();
-    } else {
-      audio.play().catch(() => {});
-    }
-    setPlaying((v) => !v);
-  };
-
-  return (
-    <button
-      id="music-player-btn"
-      onClick={toggle}
-      title={playing ? "Pause music" : "Play music"}
-      aria-label={playing ? "Pause background music" : "Play background music"}
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-white/80 backdrop-blur-md text-rose-500 border border-rose-100 rounded-2xl px-4 py-3 shadow-lg hover:shadow-rose-200/60 hover:bg-white transition-all duration-300 group"
-    >
-      <span className="text-xl">{playing ? "⏸️" : "🎵"}</span>
-      <span className="text-sm font-semibold hidden sm:inline text-rose-400 group-hover:text-rose-500 transition-colors">
-        {playing ? "Pause" : "Our Song"}
-      </span>
-      {/* Progress bar */}
-      {playing && (
-        <div className="hidden sm:flex gap-0.5 items-end h-4 ml-1">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="w-0.5 bg-rose-400 rounded-full"
-              style={{
-                height: `${Math.random() * 10 + 4}px`,
-                animation: `heartbeat ${0.5 + i * 0.15}s ease-in-out infinite`,
-              }}
-            />
-          ))}
-        </div>
-      )}
-    </button>
-  );
+  return null; // Ensure this component is fully invisible!
 }

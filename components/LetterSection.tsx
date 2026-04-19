@@ -2,23 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Navbar from "@/components/Navbar";
-import HeartBackground from "@/components/HeartBackground";
-import MusicPlayer from "@/components/MusicPlayer";
 
 const LETTER_PARAGRAPHS = [
-  "To my dearest love,",
-  "From the moment you came into my life, everything changed. The colors became brighter, the music sounded sweeter, and somehow, being alive felt like a gift rather than a routine.",
-  "You are my morning coffee and my late-night peace. You are the reason I smile at my phone when no one is watching, and the reason I sleep better knowing you exist in this world.",
-  "I have crossed many distances — emotional, physical, and internal — but none felt as easy as finding my way back to you. You are home.",
-  "I love the way you laugh at your own jokes, the way your eyes light up when you talk about what you love, and the way you make even the most ordinary moments feel extraordinary.",
-  "I am not perfect, and neither are we — but what we have is real, and honest, and worth protecting. I choose you. Every morning. Every night. In every small and big way.",
-  "Thank you for trusting me with your heart. I promise to hold it gently, cherish it deeply, and never take a single moment for granted.",
-  "For as long as my heart beats — it beats for you. Always.",
-  "Forever yours, always 💖",
+  "I don't know how to explain this perfectly...",
+  "but loving you feels like home.",
+  "In a world full of temporary things,",
+  "you are my forever 🌙",
+  "I choose you...",
+  "in every moment,",
+  "in every lifetime ❤️",
+  "Forever yours, always 💞",
 ];
 
-export default function Letter() {
+interface SectionProps {
+  setActivePage: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function Letter({ setActivePage }: SectionProps) {
   const [visibleCount, setVisibleCount] = useState(0);
 
   useEffect(() => {
@@ -29,18 +29,8 @@ export default function Letter() {
   }, [visibleCount]);
 
   return (
-    <div
-      className="relative min-h-screen overflow-x-hidden"
-      style={{
-        background:
-          "linear-gradient(160deg, #fff0f3 0%, #fce4ec 40%, #f8bbd0 80%, #fce4ec 100%)",
-      }}
-    >
-      <HeartBackground />
-      <MusicPlayer />
-      <Navbar />
-
-      <main className="relative z-10 pt-28 pb-24 px-4 flex flex-col items-center">
+    <div id="letter" className="w-full relative min-h-screen flex flex-col justify-center transition-colors duration-700 bg-gradient-to-br from-pink-50 via-rose-100 to-pink-50 dark:from-[#2a0826] dark:via-[#19041a] dark:to-[#3b0a2a] pt-20 border-t border-rose-100 dark:border-[#3b0a2a]">
+      <main className="relative z-10 pt-28 pb-24 px-4 flex flex-col items-center overflow-x-hidden">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -60,7 +50,7 @@ export default function Letter() {
             className="text-4xl md:text-6xl font-bold text-rose-500"
             style={{ fontFamily: "Playfair Display, serif" }}
           >
-            My Love Letter
+            My Love 💖
           </h1>
           <p
             className="text-rose-400 mt-3 text-lg"
@@ -80,7 +70,7 @@ export default function Letter() {
           {/* Glow effect */}
           <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-rose-300/30 via-pink-200/30 to-rose-300/30 blur-xl -z-10" />
 
-          <div className="bg-white/85 backdrop-blur-2xl rounded-3xl p-8 sm:p-12 shadow-2xl shadow-rose-200/40 border border-rose-100/60">
+          <div className="bg-white/85 dark:bg-black/60 backdrop-blur-2xl rounded-3xl p-8 sm:p-12 shadow-2xl shadow-rose-200/40 dark:shadow-rose-900/40 border border-rose-100/60 dark:border-rose-900/60">
             {/* Decorative top bar */}
             <div className="flex justify-center mb-8">
               <div className="h-px w-24 bg-gradient-to-r from-transparent via-rose-300 to-transparent" />
@@ -128,29 +118,21 @@ export default function Letter() {
           </div>
         </motion.div>
 
-        {/* Action buttons */}
+        {/* Action button - linear movement to Final section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: visibleCount >= LETTER_PARAGRAPHS.length ? 1 : 0, y: visibleCount >= LETTER_PARAGRAPHS.length ? 0 : 30 }}
           transition={{ duration: 0.7 }}
-          className="flex flex-col sm:flex-row gap-4 mt-12"
+          className="text-center mt-12"
         >
-          <motion.a
-            href="/"
-            whileHover={{ scale: 1.04, boxShadow: "0 15px 40px rgba(244,63,94,0.3)" }}
+          <motion.button
+            onClick={() => setActivePage("final")}
+            whileHover={{ scale: 1.05, boxShadow: "0 15px 40px rgba(244,63,94,0.3)" }}
             whileTap={{ scale: 0.97 }}
-            className="bg-gradient-to-r from-rose-400 to-pink-500 text-white font-bold px-10 py-4 rounded-2xl shadow-lg text-base tracking-wide text-center"
+            className="bg-gradient-to-r from-rose-400 to-pink-500 text-white font-bold px-16 py-5 rounded-2xl shadow-lg text-lg tracking-wide"
           >
-            Back to Home 🏠
-          </motion.a>
-          <motion.a
-            href="/memories"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            className="bg-white/80 backdrop-blur-sm text-rose-500 font-bold px-10 py-4 rounded-2xl border-2 border-rose-100 shadow-md text-base tracking-wide text-center hover:bg-white transition-all"
-          >
-            See Our Memories 📸
-          </motion.a>
+            One Last Thing 🎁
+          </motion.button>
         </motion.div>
       </main>
     </div>

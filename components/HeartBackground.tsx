@@ -25,7 +25,10 @@ export default function HeartBackground() {
       delay: Math.random() * 10,
       emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
     }));
-    setHearts(generated);
+    
+    // Wrap in timeout to avoid synchronous setState warning in some environments
+    const timer = setTimeout(() => setHearts(generated), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
