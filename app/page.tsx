@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import HeartBackground from "../components/HeartBackground";
 import Navbar from "../components/Navbar";
 import HomeSection from "../components/HomeSection";
 import MemoriesSection from "../components/MemoriesSection";
@@ -14,9 +13,7 @@ export default function Home() {
   const [activePage, setActivePage] = useState("home");
 
   return (
-    <div className="relative min-h-screen">
-      <HeartBackground />
-
+    <div className="relative min-h-[100dvh] w-full overflow-x-hidden">
       {/* ──────────────────────────────────────────
           ENTRY SCREEN
       ────────────────────────────────────────── */}
@@ -28,17 +25,17 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.8 }}
-            className="fixed inset-0 z-40 flex flex-col items-center justify-center text-center px-6 transition-colors duration-700 bg-[radial-gradient(ellipse_at_60%_40%,#fce4ec_0%,#f8bbd0_40%,#f48fb1_80%)] dark:bg-[radial-gradient(ellipse_at_60%_40%,#4a1538_0%,#2a0826_40%,#19041a_80%)]"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center text-center px-6 transition-colors duration-700 bg-[radial-gradient(ellipse_at_60%_40%,#fce4ec_0%,#f8bbd0_40%,#f48fb1_80%)] dark:bg-[radial-gradient(ellipse_at_60%_40%,#4a1538_0%,#2a0826_40%,#19041a_80%)]"
           >
-            {/* Decorative blobs */}
-            <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-rose-200/40 blur-3xl" />
-            <div className="absolute bottom-10 right-10 w-64 h-64 rounded-full bg-pink-300/30 blur-3xl" />
+            {/* Decorative blobs - disabled pointer-events to ensure they never block clicks on mobile */}
+            <div className="absolute top-10 left-10 w-48 h-48 md:w-72 md:h-72 rounded-full bg-rose-200/40 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-10 right-10 w-40 h-40 md:w-64 md:h-64 rounded-full bg-pink-300/30 blur-3xl pointer-events-none" />
 
             <motion.div
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3, type: "spring", stiffness: 200, damping: 15 }}
-              className="text-6xl mb-6 heartbeat inline-block"
+              className="text-6xl mb-6 heartbeat inline-block relative z-10"
             >
               ❤️
             </motion.div>
@@ -47,7 +44,7 @@ export default function Home() {
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.7 }}
-              className="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-xl"
+              className="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-xl relative z-10"
               style={{ fontFamily: "Playfair Display, serif" }}
             >
               Hey Love ❤️
@@ -57,7 +54,7 @@ export default function Home() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.7 }}
-              className="text-xl md:text-2xl text-rose-400 mb-10 leading-relaxed font-medium max-w-lg mx-auto" 
+              className="text-xl md:text-2xl text-rose-400 mb-10 leading-relaxed font-medium max-w-lg mx-auto relative z-10" 
               style={{ fontFamily: "Dancing Script, cursive", fontSize: "1.8rem" }}
             >
               I made something just for you...<br/>
@@ -68,8 +65,11 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.5 }}
-              onClick={() => setEntered(true)}
-              className="pulse-glow bg-gradient-to-r from-rose-400 via-pink-500 to-rose-500 text-white font-bold text-lg md:text-xl px-12 py-4 rounded-full shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              onClick={() => {
+                console.log("Enter button clicked - navigating to site content");
+                setEntered(true);
+              }}
+              className="pulse-glow bg-gradient-to-r from-rose-400 via-pink-500 to-rose-500 text-white font-bold text-lg md:text-xl px-12 py-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-95 touch-manipulation relative z-50 pointer-events-auto cursor-pointer"
             >
               Enter 💞
             </motion.button>
